@@ -9,7 +9,7 @@ function AddCharacterModal({ show, onClose, onCharacterAdded }) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    fetch("/people", {
+    fetch("https://redesigned-goldfish-x9wj5v997p7h9vw9-8000.app.github.dev/people", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -19,19 +19,30 @@ function AddCharacterModal({ show, onClose, onCharacterAdded }) {
         description
       })
     })
-      .then((res) => {
+      .then(async (res) => {
         if (res.ok) {
+          console.log("✅ Character successfully added!");
+
+          // Resetear campos del formulario
           setName("");
           setGender("");
           setBirthYear("");
           setDescription("");
-          onCharacterAdded(); // refresca lista
-          onClose(); // cierra modal
+
+          // Refrescar lista en el componente padre
+          onCharacterAdded();
+
+          // Cerrar el modal
+          onClose();
         } else {
-          console.error("Error creating character");
+          const errText = await res.text();
+          console.warn("⚠️ Error response:", errText);
+          console.error("❌ Failed to create character. Status:", res.status);
         }
       })
-      .catch((err) => console.error("Error:", err));
+      .catch((err) => {
+        console.error("❌ Network error:", err);
+      });
   };
 
   if (!show) return null;
@@ -75,4 +86,3 @@ function AddCharacterModal({ show, onClose, onCharacterAdded }) {
 }
 
 export default AddCharacterModal;
-

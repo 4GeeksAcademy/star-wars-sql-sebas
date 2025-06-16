@@ -1,38 +1,26 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from models import db, Planet
 
-# Definimos el blueprint
 planet_bp = Blueprint('planet_bp', __name__)
 
-# Endpoint: GET /planets → listar todos los planetas
 @planet_bp.route('/planets', methods=['GET'])
 def get_planets():
-    # Consultamos todos los registros de la tabla Planet
-    planet_list = Planet.query.all()
-
-    # Serializamos los registros → convertimos a diccionarios
-    results = list(map(lambda p: {
+    planets = Planet.query.all()
+    results = [{
         "id": p.id,
         "name": p.name,
         "population": p.population,
         "terrain": p.terrain,
         "description": p.description
-    }, planet_list))
-
-    # Devolvemos un JSON con la lista de planetas
+    } for p in planets]
     return jsonify(results), 200
 
-# Endpoint: GET /planets/<planet_id> → obtener un planeta por id
 @planet_bp.route('/planets/<int:planet_id>', methods=['GET'])
 def get_planet(planet_id):
-    # Buscamos el planeta por id
     planet = Planet.query.get(planet_id)
-
-    # Si no existe, devolvemos 404
-    if planet is None:
+    if not planet:
         return jsonify({"error": "Planet not found"}), 404
 
-    # Si existe, lo devolvemos serializado
     result = {
         "id": planet.id,
         "name": planet.name,
@@ -40,20 +28,16 @@ def get_planet(planet_id):
         "terrain": planet.terrain,
         "description": planet.description
     }
-
     return jsonify(result), 200
 
-from flask import request
-
-# Endpoint: POST /planets → agregar un nuevo planeta
 @planet_bp.route('/planets', methods=['POST'])
 def create_planet():
     data = request.get_json()
 
-    name = data.get('name')
-    population = data.get('population')
-    terrain = data.get('terrain')
-    description = data.get('description')
+    name = data.get("name")
+    population = data.get("population")
+    terrain = data.get("terrain")
+    description = data.get("description")
 
     if not name:
         return jsonify({"error": "Name is required"}), 400
@@ -75,3 +59,15 @@ def create_planet():
             "name": new_planet.name
         }
     }), 201
+
+@planet_bp.route('/planets/<int:planet_id>', methods=['DELETE'])
+def delete_planet(planet_id):
+    print("🔥 Attempting to delete planet ID:", planet_id)
+    planet = Planet.query.get(planet_id)
+    if not planet:
+        return jsonify({"error": "Planet not found"}), 404
+
+    db.session.delete(planet)
+    db.session.commit()
+    print("✅ Planet deleted:", planet.name)
+    return jsonify({"msg": f"Planet {planet.name} deleted"}), 200

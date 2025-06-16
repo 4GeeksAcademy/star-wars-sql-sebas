@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
 import { CHARACTER_IMAGES, PLANET_IMAGES } from "../utils/images";
 
-function Card({ item, type, favorites, fetchFavorites }) {
+function Card({ item, type, favorites, fetchFavorites, onDelete }) {
   const handleFavorite = (e) => {
-    e.preventDefault(); // Para que no navegue al hacer click en ❤️
+    e.preventDefault(); // evita navegación
 
     const isFavorite = favorites.some((fav) =>
       type === "people"
@@ -22,6 +22,13 @@ function Card({ item, type, favorites, fetchFavorites }) {
           fetchFavorites();
         })
         .catch((error) => console.error("Error adding favorite:", error));
+    }
+  };
+
+  const handleDelete = (e) => {
+    e.preventDefault(); // evita navegación
+    if (onDelete) {
+      onDelete(item.id);
     }
   };
 
@@ -52,14 +59,26 @@ function Card({ item, type, favorites, fetchFavorites }) {
           alt={item.name}
           style={{ height: "200px", objectFit: "cover" }}
         />
-        <button
-          className={`btn btn-sm position-absolute top-0 end-0 m-2 ${
-            isFavorite ? "btn-warning" : "btn-outline-warning"
-          }`}
-          onClick={handleFavorite}
-        >
-          ❤️
-        </button>
+
+        <div className="position-absolute top-0 end-0 m-2 d-flex flex-column">
+          <button
+            className={`btn btn-sm mb-1 ${
+              isFavorite ? "btn-warning" : "btn-outline-warning"
+            }`}
+            onClick={handleFavorite}
+          >
+            ❤️
+          </button>
+          {onDelete && (
+            <button
+              className="btn btn-sm btn-outline-danger"
+              onClick={handleDelete}
+            >
+              🗑️
+            </button>
+          )}
+        </div>
+
         <div className="card-body text-center">
           <h5 className="card-title">{item.name}</h5>
         </div>
@@ -69,3 +88,5 @@ function Card({ item, type, favorites, fetchFavorites }) {
 }
 
 export default Card;
+
+

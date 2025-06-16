@@ -1,16 +1,20 @@
-import { useEffect, useState } from "react";
 import Card from "../components/Card";
 import Slider from "react-slick";
 
-function Planets({ favorites, fetchFavorites }) {
-  const [planets, setPlanets] = useState([]);
-
-  useEffect(() => {
-    fetch("/planets")
-      .then((response) => response.json())
-      .then((data) => setPlanets(data))
-      .catch((error) => console.error("Error fetching planets:", error));
-  }, []);
+function Planets({ planets, favorites, fetchFavorites, fetchPlanets }) {
+  const handleDelete = (id) => {
+    console.log("🗑️ Deleting planet ID:", id);
+    fetch(`/planets/${id}`, { method: "DELETE" })
+      .then((res) => {
+        if (res.ok) {
+          fetchPlanets();
+          fetchFavorites();
+        } else {
+          console.error("Error deleting planet:", res.status);
+        }
+      })
+      .catch((error) => console.error("Error deleting planet:", error));
+  };
 
   const settings = {
     dots: false,
@@ -21,27 +25,9 @@ function Planets({ favorites, fetchFavorites }) {
     nextArrow: <SampleNextArrow />,
     prevArrow: <SamplePrevArrow />,
     responsive: [
-      {
-        breakpoint: 1200,
-        settings: {
-          slidesToShow: 3,
-          slidesToScroll: 3,
-        },
-      },
-      {
-        breakpoint: 768,
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 2,
-        },
-      },
-      {
-        breakpoint: 576,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-        },
-      },
+      { breakpoint: 1200, settings: { slidesToShow: 3, slidesToScroll: 3 } },
+      { breakpoint: 768, settings: { slidesToShow: 2, slidesToScroll: 2 } },
+      { breakpoint: 576, settings: { slidesToShow: 1, slidesToScroll: 1 } },
     ],
   };
 
@@ -51,9 +37,10 @@ function Planets({ favorites, fetchFavorites }) {
         <div key={planet.id} className="p-2">
           <Card
             item={planet}
-            type="planet"
+            type="planets"
             favorites={favorites}
             fetchFavorites={fetchFavorites}
+            onDelete={handleDelete}
           />
         </div>
       ))}
@@ -61,8 +48,7 @@ function Planets({ favorites, fetchFavorites }) {
   );
 }
 
-function SampleNextArrow(props) {
-  const { onClick } = props;
+function SampleNextArrow({ onClick }) {
   return (
     <div className="slick-arrow slick-next" onClick={onClick}>
       <span style={{ fontSize: "24px", color: "white" }}>{">"}</span>
@@ -70,8 +56,7 @@ function SampleNextArrow(props) {
   );
 }
 
-function SamplePrevArrow(props) {
-  const { onClick } = props;
+function SamplePrevArrow({ onClick }) {
   return (
     <div className="slick-arrow slick-prev" onClick={onClick}>
       <span style={{ fontSize: "24px", color: "white" }}>{"<"}</span>
@@ -80,8 +65,4 @@ function SamplePrevArrow(props) {
 }
 
 export default Planets;
-
-
-
-
 

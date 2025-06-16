@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import AddCharacterModal from "./AddCharacterModal";
+import AddPlanetModal from "./AddPlanetModal";
 
-function Navbar({ favorites, handleRemoveFavorite, fetchCharacters }) {
+function Navbar({ favorites, handleRemoveFavorite, fetchFavorites, fetchCharacters, fetchPlanets }) {
   const [showModal, setShowModal] = useState(false);
 
   return (
@@ -58,25 +59,16 @@ function Navbar({ favorites, handleRemoveFavorite, fetchCharacters }) {
         </div>
       </nav>
 
-      {/* Modal personaje */}
       <AddCharacterModal
         show={showModal}
         onClose={() => setShowModal(false)}
         onCharacterAdded={fetchCharacters}
       />
+
+      <AddPlanetModal onPlanetCreated={fetchPlanets} />
     </>
   );
 }
 
 export default Navbar;
-
-
-
-
-
-
-
-
-
-
 

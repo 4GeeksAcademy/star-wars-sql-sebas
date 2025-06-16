@@ -19,14 +19,18 @@ from routes.favorites_routes import favorites_bp
 app = Flask(__name__)
 app.url_map.strict_slashes = False
 
-# Configuración de la base de datos → forzamos SQLite para desarrollo
+# Configuración de la base de datos (SQLite en desarrollo)
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///starwars.db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Inicialización de extensiones
 MIGRATE = Migrate(app, db)
 db.init_app(app)
-CORS(app, supports_credentials=True, resources={r"/*": {"origins": "https://redesigned-goldfish-x9wj5v997p7h9vw9-5173.app.github.dev"}})
+
+# ✅ Habilitamos CORS para cualquier origen (útil en Codespaces y desarrollo)
+CORS(app, resources={r"/*": {"origins": "*"}})
+
+# Configurar panel de admin (opcional)
 setup_admin(app)
 
 # Manejo de errores personalizados
@@ -39,7 +43,7 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
-# Ejemplo simple de endpoint de prueba
+# Endpoint de prueba
 @app.route('/user', methods=['GET'])
 def handle_hello():
     response_body = {
@@ -47,7 +51,7 @@ def handle_hello():
     }
     return jsonify(response_body), 200
 
-# Registro de blueprints
+# Registro de rutas
 app.register_blueprint(people_bp)
 app.register_blueprint(planet_bp)
 app.register_blueprint(user_bp)
@@ -56,6 +60,7 @@ app.register_blueprint(favorites_bp)
 # Main
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000, debug=True)
+
 
 
 
