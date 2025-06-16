@@ -1,76 +1,58 @@
-<a href="https://www.breatheco.de"><img height="280" align="right" src="https://github.com/4GeeksAcademy/flask-rest-hello/blob/main/docs/assets/badge.png?raw=true"></a>
+# 🪐 Star Wars Blog - Fullstack API + Frontend
 
-# Flask Boilerplate for Junior Developers
+Este proyecto es una aplicación fullstack desarrollada como parte del bootcamp de 4Geeks Academy. Permite gestionar y visualizar personajes y planetas del universo de Star Wars, además de marcar favoritos.
 
-Create flask API's in minutes, [📹 watch the video tutorial](https://youtu.be/ORxQ-K3BzQA).
+El proyecto incluye:
 
-- [Extensive documentation here](https://start.4geeksacademy.com).
-- Integrated with Pipenv for package managing.
-- Fast deloyment to render.com or heroku with `$ pipenv run deploy`.
-- Use of `.env` file.
-- SQLAlchemy integration for database abstraction.
+- Un **backend en Flask** con SQLAlchemy y una API RESTful  
+- Un **frontend en React** con Vite y Bootstrap  
+- Funcionalidad completa de CRUD (crear, leer, eliminar) para personajes y planetas  
+- Sistema de favoritos sincronizado  
+- Estilo visual inspirado en el Star Wars Databank  
 
-## 1) Installation
+---
 
-This template installs itself in a few seconds if you open it for free with Codespaces (recommended) or Gitpod.
-Skip this installation steps and jump to step 2 if you decide to use any of those services.
+## 🚀 Tecnologías utilizadas
 
-> Important: The boiplerplate is made for python 3.10 but you can change the `python_version` on the Pipfile.
+- Backend: Python, Flask, SQLAlchemy, Flask-Migrate, Flask-CORS  
+- Base de datos: SQLite (modo local)  
+- Frontend: React, Vite, Bootstrap 5  
+- Otros: React Router, react-slick para carruseles  
 
-The following steps are automatically runned withing gitpod, if you are doing a local installation you have to do them manually:
+---
 
-```sh
-pipenv install;
-psql -U root -c 'CREATE DATABASE example;'
-pipenv run init;
-pipenv run migrate;
-pipenv run upgrade;
-```
+## 📦 Estructura del proyecto
+star-wars-sql-sebas/
+├── app.py # punto de entrada del backend
+├── models.py # modelos SQLAlchemy
+├── routes/ # rutas separadas por entidad
+├── starwars-frontend/ # frontend en React
+│ └── src/
+│ ├── components/ # modales, navbar, card genérica
+│ ├── pages/ # vistas Characters, Planets, Home, Detail
+│ └── App.jsx # routing principal
 
-> Note: Codespaces users can connect to psql by typing: `psql -h localhost -U gitpod example`
 
-## 2) How to Start coding
+---
 
-There is an example API working with an example database. All your application code should be written inside the `./src/` folder.
+## ⚙️ Cómo ejecutar el proyecto localmente
 
-- src/main.py (it's where your endpoints should be coded)
-- src/models.py (your database tables and serialization logic)
-- src/utils.py (some reusable classes and functions)
-- src/admin.py (add your models to the admin and manage your data easily)
-
-For a more detailed explanation, look for the tutorial inside the `docs` folder.
-
-## Remember to migrate every time you change your models
-
-You have to migrate and upgrade the migrations for every update you make to your models:
+### 1. Clonar el repositorio
 
 ```bash
-$ pipenv run migrate # (to make the migrations)
-$ pipenv run upgrade  # (to update your databse with the migrations)
-```
+git clone https://github.com/4GeeksAcademy/star-wars-sql-sebas.git
+cd star-wars-sql-sebas
 
-## Generate a database diagram
+2. Instalar y ejecutar el backend (Flask)
+pipenv install
+pipenv shell
+pipenv run init         # crea la base de datos
+pipenv run migrate      # aplica las migraciones
+pipenv run upgrade      # actualiza la base
+pipenv run start        # inicia el backend en http://localhost:8000
 
-If you want to visualize the structure of your database in the form of a diagram, you can generate it with the following command:
+3. Instalar y ejecutar el frontend (React)
+cd starwars-frontend
+npm install
+npm run dev
 
-```bash
-$ pipenv run diagram
-```
-
-This command will generate a file with the database diagram based on the models defined in `src/models.py`.
-
-## Check your API live
-
-1. Once you run the `pipenv run start` command your API will start running live and you can open it by clicking in the "ports" tab and then clicking "open browser".
-
-> ✋ If you are working on a coding cloud like [Codespaces](https://docs.github.com/en/codespaces/developing-in-codespaces/forwarding-ports-in-your-codespace#sharing-a-port) or [Gitpod](https://www.gitpod.io/docs/configure/workspaces/ports#configure-port-visibility) make sure that your forwared port is public.
-
-## Publish/Deploy your website!
-
-This boilerplate it's 100% read to deploy with Render.com and Herkou in a matter of minutes. Please read the [official documentation about it](https://start.4geeksacademy.com/deploy).
-
-### Contributors
-
-This template was built as part of the 4Geeks Academy [Coding Bootcamp](https://4geeksacademy.com/us/coding-bootcamp) by [Alejandro Sanchez](https://twitter.com/alesanchezr) and many other contributors. Find out more about our [Full Stack Developer Course](https://4geeksacademy.com/us/coding-bootcamps/part-time-full-stack-developer), and [Data Science Bootcamp](https://4geeksacademy.com/us/coding-bootcamps/datascience-machine-learning).
-
-You can find other templates and resources like this at the [school github page](https://github.com/4geeksacademy/).
