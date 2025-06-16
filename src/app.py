@@ -1,6 +1,7 @@
 """
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
+
 import os
 from flask import Flask, request, jsonify, url_for
 from flask_migrate import Migrate
@@ -9,43 +10,53 @@ from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
 from models import db, User
-#from models import Person
+from routes.people_routes import people_bp
+from routes.planet_routes import planet_bp
+from routes.user_routes import user_bp
+from routes.favorites_routes import favorites_bp
 
+# Inicialización de la app
 app = Flask(__name__)
 app.url_map.strict_slashes = False
 
-db_url = os.getenv("DATABASE_URL")
-if db_url is not None:
-    app.config['SQLALCHEMY_DATABASE_URI'] = db_url.replace("postgres://", "postgresql://")
-else:
-    app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:////tmp/test.db"
+# Configuración de la base de datos → forzamos SQLite para desarrollo
+app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///starwars.db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+# Inicialización de extensiones
 MIGRATE = Migrate(app, db)
 db.init_app(app)
-CORS(app)
+CORS(app, supports_credentials=True, resources={r"/*": {"origins": "https://redesigned-goldfish-x9wj5v997p7h9vw9-5173.app.github.dev"}})
 setup_admin(app)
 
-# Handle/serialize errors like a JSON object
+# Manejo de errores personalizados
 @app.errorhandler(APIException)
 def handle_invalid_usage(error):
     return jsonify(error.to_dict()), error.status_code
 
-# generate sitemap with all your endpoints
+# Sitemap de la API
 @app.route('/')
 def sitemap():
     return generate_sitemap(app)
 
+# Ejemplo simple de endpoint de prueba
 @app.route('/user', methods=['GET'])
 def handle_hello():
-
     response_body = {
         "msg": "Hello, this is your GET /user response "
     }
-
     return jsonify(response_body), 200
 
-# this only runs if `$ python src/app.py` is executed
+# Registro de blueprints
+app.register_blueprint(people_bp)
+app.register_blueprint(planet_bp)
+app.register_blueprint(user_bp)
+app.register_blueprint(favorites_bp)
+
+# Main
 if __name__ == '__main__':
-    PORT = int(os.environ.get('PORT', 3000))
-    app.run(host='0.0.0.0', port=PORT, debug=False)
+    app.run(host='0.0.0.0', port=8000, debug=True)
+
+
+
+
